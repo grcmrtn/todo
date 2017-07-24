@@ -1,6 +1,6 @@
 var express = require('express');
-var session = require('cookie-session'); // Loads the piece of middleware for sessions
-var bodyParser = require('body-parser'); // Loads the piece of middleware for managing the settings
+var session = require('cookie-session');
+var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 var app = express();
@@ -10,7 +10,7 @@ app.use(express.static(__dirname + '/views'));
 app.use(session({secret: 'todo'}))
 
 
-/*create an empty one in the form of an array before continuing */
+/*create an empty array before continuing */
 .use(function(req, res, next){
     if (typeof(req.session.todolist) == 'undefined') {
         req.session.todolist = [];
@@ -46,6 +46,7 @@ app.use(session({secret: 'todo'}))
     res.redirect('/todo');
 })
 
+/* If the item is done*/
 .post('/todo/done/:id', urlencodedParser, function(req, res) {
     if (req.params.id != '') {
         req.session.done.push(req.body.newtodo.id, 1);
@@ -53,10 +54,12 @@ app.use(session({secret: 'todo'}))
     res.redirect('/todo');
 })
 
+/* Show all the completed items */
 .get('/todo/complete/', function(req, res) {
     res.render('complete.ejs', {todolist: req.session.done});
 })
 
+/* Show all items */
 .get('/todo/all/', function(req, res) {
     res.render('index.ejs', {todolist: req.session.todolist});
 })
